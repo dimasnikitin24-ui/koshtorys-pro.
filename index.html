@@ -154,11 +154,40 @@ $("#pdfBtn").addEventListener("click",()=>{const meta=$("#printMeta");meta.inner
 $("#exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(payload(),null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="koshtorys.json";a.click();URL.revokeObjectURL(a.href)});
 $("#importBtn").addEventListener("click",()=>$("#importFile").click());
 $("#importFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());["project","client","master","date","notes"].forEach(k=>{if(d[k]!==undefined)$("#"+k).value=d[k]});if(Array.isArray(d.rows))rows=d.rows.map(r=>makeRow(String(r.name||""),String(r.unit||"м²"),Number(r.qty)||0,Number(r.price)||0));if(d.language&&translations[d.language])$("#language").value=d.language;applyLanguage();saveQuiet();$("#status").textContent=t("saved")}catch(err){alert(t("importError"))}e.target.value=""});
-  $("#registerBtn").addEventListener("click",async()=>{
+$("#registerBtn").addEventListener("click",async()=>{
   const email=$("#authEmail").value.trim();
   const password=$("#authPassword").value;
-  const {error}=await supabase.auth.signUp({email,password});
-  $("#authStatus").textContent=error?error.message:"Перевір пошту для підтвердження реєстрації.";
+
+  if(!email || !password){
+    $("#authStatus").textContent="Введи email і пароль.";
+    return;
+  }
+
+  if(password.length < 6){
+    $("#authStatus").textContent="Пароль має містити мінімум 6 символів.";
+    return;
+  }
+
+  $("#authStatus").textContent="Виконується реєстрація...";
+
+  try {
+    const {data,error}=await supabase.auth.signUp({
+      email:email,
+      password:password
+    });
+
+    if(error){
+      $("#authStatus").textContent="Помилка: "+error.message;
+      return;
+    }
+
+    $("#authStatus").textContent=
+      data.user && !data.session
+      ? "Реєстрація успішна! Перевір пошту."
+      : "Реєстрація успішна!";
+  } catch(error) {
+    $("#authStatus").textContent="Помилка з'єднання: "+error.message;
+  }
 });
 
 $("#loginBtn").addEventListener("click",async()=>{
