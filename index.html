@@ -214,7 +214,6 @@ $("#logoutBtn").addEventListener("click",async()=>{
 supabase.auth.onAuthStateChange(()=>{
   updateAuthUI();
 });
-
 updateAuthUI();
 $("#proBtn").addEventListener("click",()=>alert(t("proAlert")));
 $("#language").addEventListener("change",()=>{applyLanguage();saveQuiet()});
