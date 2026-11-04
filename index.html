@@ -141,6 +141,7 @@ for(const key of ["qty","price"]){const td=document.createElement("td"),inp=docu
 const amount=document.createElement("td");amount.className="num";amount.textContent=money(r.qty*r.price);amount.dataset.amount="1";tr.append(amount);
 const deltd=document.createElement("td");deltd.className="deletecol no-print";const del=document.createElement("button");del.className="btn btn-danger btn-small";del.textContent="×";del.title=t("remove");del.setAttribute("aria-label",t("remove"));del.addEventListener("click",()=>{rows.splice(i,1);renderRows();calc();saveQuiet()});deltd.append(del);tr.append(deltd);tbody.append(tr)});
 }
+  $("#language").addEventListener("change", applyLanguage);
 function calc(){let total=0;document.querySelectorAll("#rows tr").forEach((tr,i)=>{if(rows[i]){const n=rows[i].qty*rows[i].price;total+=n;const a=tr.querySelector("[data-amount]");if(a)a.textContent=money(n)}});$("#count").textContent=rows.length;$("#subtotal").textContent=money(total);$("#total").textContent=money(total)}
 function payload(){return {version:1,project:$("#project").value,client:$("#client").value,master:$("#master").value,date:$("#date").value,notes:$("#notes").value,rows,language:$("#language").value}}
 function saveQuiet(){try{localStorage.setItem("koshtorysProData",JSON.stringify(payload()))}catch(e){}}
