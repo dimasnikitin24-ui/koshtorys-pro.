@@ -33,6 +33,15 @@
     <p data-i18n="heroText">Додавай роботи, вказуй обсяг і ціну, автоматично рахуй підсумок та друкуй готовий кошторис у PDF.</p>
   </div>
 </section>
+  <section class="card no-print" id="authBox">
+  <h2>Обліковий запис</h2>
+  <input id="authEmail" type="email" placeholder="Електронна пошта">
+  <input id="authPassword" type="password" placeholder="Пароль (мінімум 6 символів)">
+  <button class="btn btn-primary" id="registerBtn">Зареєструватися</button>
+  <button class="btn btn-light" id="loginBtn">Увійти</button>
+  <button class="btn btn-light" id="logoutBtn" hidden>Вийти</button>
+  <p id="authStatus"></p>
+  </section>
 <main class="wrap">
   <div class="layout">
     <div>
@@ -103,8 +112,13 @@
   </div>
 </main>
 <footer class="footer no-print"><div class="wrap"><strong>Кошторис PRO</strong> · <span data-i18n="footerText">Інструмент для попереднього розрахунку вартості ремонтних робіт.</span><p>© <span id="year"></span> Кошторис PRO</p></div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const $=s=>document.querySelector(s);
+  const supabase = window.supabase.createClient(
+  "https://qrblobwwcggihyzzonpk.supabase.co",
+  "sb_publishable_dEzrIgGhOTyTfIi0SPOmGA_HkgopXF8"
+);
 const translations={
 uk:{brand:"Кошторис PRO",save:"Зберегти",eyebrow:"ІНСТРУМЕНТ ДЛЯ МАЙСТРІВ",heroTitle:"Створи кошторис ремонту за кілька хвилин",heroText:"Додавай роботи, вказуй обсяг і ціну, автоматично рахуй підсумок та друкуй готовий кошторис у PDF.",projectInfo:"Дані кошторису",project:"Об’єкт / адреса",client:"Замовник",master:"Виконавець",date:"Дата",notes:"Примітки",works:"Роботи та ціни",addWork:"Додати роботу",work:"Назва роботи",unit:"Од.",quantity:"Кількість",unitPrice:"Ціна",sum:"Сума",addExamples:"＋ Типові ремонтні роботи",clear:"Очистити список",howTitle:"Як це працює",feature1Title:"Додай роботи",feature1Text:"Вкажи назву, одиницю, кількість і ціну.",feature2Title:"Перевір суму",feature2Text:"Суми та загальний підсумок рахуються автоматично.",feature3Title:"Збережи PDF",feature3Text:"Натисни друк і вибери «Зберегти як PDF».",plansTitle:"Плани використання",freePlan:"Безкоштовно",freeText:"Калькулятор, базовий кошторис, друк у PDF.",currentPlan:"Поточний план",proPlan:"PRO назавжди",proText:"Ідея платного розширення: шаблони, історія, додаткові можливості.",proSoon:"Незабаром",paymentNotice:"Оплата 299 ₴, реєстрація та особистий кабінет поки що не підключені. Для справжніх платежів потрібні сервер і платіжний сервіс; ця кнопка не списує гроші.",summary:"Підсумок",workCount:"Кількість позицій",subtotal:"Разом за роботи",total:"Загальна вартість",pdf:"⬇ Друк / зберегти PDF",export:"Експортувати дані (JSON)",import:"Імпортувати дані",localSave:"Дані зберігаються в цьому браузері на вашому пристрої.",adPlaceholder:"Після схвалення сайту Google AdSense тут можна розмістити рекламу.",seoTitle:"Корисно знати",seoText:"Калькулятор допомагає попередньо оцінити вартість ремонтних робіт. Перед погодженням кошторису перевірте обсяги, одиниці виміру та ціни.",footerText:"Інструмент для попереднього розрахунку вартості ремонтних робіт.",printLabel:"Кошторис ремонтних робіт",remove:"Видалити",choose:"Оберіть",saved:"Кошторис збережено на цьому пристрої.",cleared:"Список очищено.",empty:"Додайте роботу, щоб почати.",proAlert:"Платежі та PRO-акаунти ще не підключені.",importError:"Не вдалося прочитати файл. Перевірте, що це JSON, створений цим сайтом.",units:["м²","пог. м","шт.","год","компл.","м³"],common:[["Шпаклювання стін","м²",0,180],["Фарбування стін","м²",0,120],["Монтаж гіпсокартону","м²",0,350],["Укладання плитки","м²",0,600],["Монтаж плінтуса","пог. м",0,100],["Монтаж стелі","м²",0,300]]},
 en:{brand:"Estimate PRO",save:"Save",eyebrow:"TOOL FOR TRADESPEOPLE",heroTitle:"Create a renovation estimate in minutes",heroText:"Add jobs, enter quantities and prices, calculate totals automatically, and print your estimate as a PDF.",projectInfo:"Estimate details",project:"Project / address",client:"Client",master:"Contractor",date:"Date",notes:"Notes",works:"Work and prices",addWork:"Add work",work:"Work description",unit:"Unit",quantity:"Quantity",unitPrice:"Price",sum:"Amount",addExamples:"＋ Common renovation jobs",clear:"Clear list",howTitle:"How it works",feature1Title:"Add work",feature1Text:"Enter a description, unit, quantity and price.",feature2Title:"Check the total",feature2Text:"Line amounts and the grand total update automatically.",feature3Title:"Save PDF",feature3Text:"Choose Print, then “Save as PDF”.",plansTitle:"Plans",freePlan:"Free",freeText:"Calculator, basic estimate and PDF printing.",currentPlan:"Current plan",proPlan:"PRO lifetime",proText:"Planned upgrade: templates, history and extra features.",proSoon:"Coming soon",paymentNotice:"The 299 UAH payment, registration and account are not connected yet. Real payments require a server and payment provider; this button does not charge you.",summary:"Summary",workCount:"Line items",subtotal:"Work subtotal",total:"Total cost",pdf:"⬇ Print / save PDF",export:"Export data (JSON)",import:"Import data",localSave:"Data is saved in this browser on your device.",adPlaceholder:"After Google AdSense approval, ads can be placed here.",seoTitle:"Good to know",seoText:"This calculator provides an initial estimate of renovation costs. Check quantities, units and prices before approving the estimate.",footerText:"A tool for preliminary renovation cost estimates.",printLabel:"Renovation estimate",remove:"Remove",choose:"Select",saved:"Estimate saved on this device.",cleared:"List cleared.",empty:"Add a work item to begin.",proAlert:"Payments and PRO accounts are not connected yet.",importError:"Could not read this file. Make sure it is a JSON exported by this site.",units:["m²","linear m","pcs","hour","set","m³"],common:[["Wall plastering","m²",0,180],["Wall painting","m²",0,120],["Drywall installation","m²",0,350],["Tile installation","m²",0,600],["Skirting board installation","linear m",0,100],["Ceiling installation","m²",0,300]]},
@@ -140,6 +154,39 @@ $("#pdfBtn").addEventListener("click",()=>{const meta=$("#printMeta");meta.inner
 $("#exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(payload(),null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="koshtorys.json";a.click();URL.revokeObjectURL(a.href)});
 $("#importBtn").addEventListener("click",()=>$("#importFile").click());
 $("#importFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());["project","client","master","date","notes"].forEach(k=>{if(d[k]!==undefined)$("#"+k).value=d[k]});if(Array.isArray(d.rows))rows=d.rows.map(r=>makeRow(String(r.name||""),String(r.unit||"м²"),Number(r.qty)||0,Number(r.price)||0));if(d.language&&translations[d.language])$("#language").value=d.language;applyLanguage();saveQuiet();$("#status").textContent=t("saved")}catch(err){alert(t("importError"))}e.target.value=""});
+  $("#registerBtn").addEventListener("click",async()=>{
+  const email=$("#authEmail").value.trim();
+  const password=$("#authPassword").value;
+  const {error}=await supabase.auth.signUp({email,password});
+  $("#authStatus").textContent=error?error.message:"Перевір пошту для підтвердження реєстрації.";
+});
+
+$("#loginBtn").addEventListener("click",async()=>{
+  const email=$("#authEmail").value.trim();
+  const password=$("#authPassword").value;
+  const {error}=await supabase.auth.signInWithPassword({email,password});
+  $("#authStatus").textContent=error?error.message:"Вхід успішний!";
+});
+
+$("#logoutBtn").addEventListener("click",async()=>{
+  const {error}=await supabase.auth.signOut();
+  $("#authStatus").textContent=error?error.message:"Ви вийшли з акаунта.";
+});
+  async function updateAuthUI(){
+  const {data:{session}}=await supabase.auth.getSession();
+  $("#logoutBtn").hidden=!session;
+  $("#registerBtn").hidden=!!session;
+  $("#loginBtn").hidden=!!session;
+  $("#authStatus").textContent=session
+    ? "Ви увійшли: "+session.user.email
+    : "Увійдіть або створіть акаунт";
+}
+
+supabase.auth.onAuthStateChange(()=>{
+  updateAuthUI();
+});
+
+updateAuthUI();
 $("#proBtn").addEventListener("click",()=>alert(t("proAlert")));
 $("#language").addEventListener("change",()=>{applyLanguage();saveQuiet()});
 ["project","client","master","date","notes"].forEach(id=>$("#"+id).addEventListener("input",saveQuiet));
